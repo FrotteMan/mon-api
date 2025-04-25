@@ -5,7 +5,6 @@ header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-	// Récupère le palier.
     if (isset($_GET['id'])) {
         $id = $_GET['id'];
 
@@ -15,11 +14,10 @@ if ($method === 'GET') {
         $palier = $stmt->fetch(PDO::FETCH_ASSOC);
 
         echo json_encode($palier);
+    } else {
+        // ID manquant
+        echo json_encode(['error' => 'ID du palier manquant']);
     }
-	// Vérification de l'ID
-	if (!isset($_GET['id'])) {
-		die("ID du palier manquant.");
-	}
 } elseif ($method === 'POST') {
     // Mise à jour d'un palier
     if (isset($_POST['id_palier'])) {
@@ -27,15 +25,14 @@ if ($method === 'GET') {
         $nom = $_POST['nom_palier'];
         $nbr_pts_minimum = $_POST['nbr_pts_minimum_palier'];
 
-        // Préparer la requête UPDATE
         $sql = $pdo->prepare("UPDATE palier SET nom_palier=?, nbr_pts_minimum_palier=? WHERE id_palier=?");
         $sql->execute([$nom, $nbr_pts_minimum, $id]);
 
-        echo json_encode(['success' => 'Palier mise à jour']);
+        echo json_encode(['success' => 'Palier mis à jour']);
     } else {
         echo json_encode(['error' => 'ID de palier manquant']);
     }
-else {
+} else {
     http_response_code(405); // Méthode non autorisée
     echo json_encode(['error' => 'Méthode non autorisée']);
 }
